@@ -13,7 +13,7 @@ const PublicPrivateRoutes = () => {
         <Route path="/about" element={<About />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/sign-in" element={<Login />} />
-        <Route path="/profile" element={<SignUp />} />
+        <Route path="/sign-up" element={<SignUp />} />
       </Routes>
     </>
   );
