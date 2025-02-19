@@ -1,55 +1,74 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-
+import "react-toastify/dist/ReactToastify.css"; // Ensure toast styles are loaded
 import Loader from "./Loader";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setloading] = useState(false);
-  const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // ✅ Prevent form from reloading the page
+    e.preventDefault(); // ✅ Prevent page reload
+
+    // Trim input values to avoid accidental spaces
+    const UserName = userName.trim();
+    const Email = email.trim();
+    const Password = password.trim();
+
     let errors = {};
-    if (!userName) errors.userName = "User name is required";
-
-    if (!password) errors.password = "Password is required";
-
-    if (!email) errors.email = "Email is required";
-
-    setError(errors);
-    if (Object.keys(errors).length > 0) {
-      Object.values(errors).forEach((errormsg) => {
-        toast.error(errormsg);
-      });
+    if (!UserName) {
+      errors.userName = "Username is required";
     }
 
-    const formData = { userName, email, password };
-    setloading(true);
+    if (!Email) {
+      errors.email = "Email is required";
+    }
+
+    if (!Password) {
+      errors.password = "Password is required";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      Object.values(errors).forEach((errormsg) => toast.error(errormsg));
+      return; // ✅ Stop function if validation fails
+    }
+
+    setLoading(true);
+
     try {
       const response = await fetch("/api/user/sign-up", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json", //type of data
-        },
-        body: JSON.stringify(formData), //it tells the browser take the data from frontend(body) and send it to the backend
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userName: UserName,
+          email: Email,
+          password: Password,
+        }),
       });
 
-      const data = await response.json();
-      setloading(false);
-      if (data.success === true) {
-        toast.success(data.message);
+      const data = await response.json(); // ✅ Parse JSON response
+
+      setLoading(false);
+
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong!");
       }
-      navigate("/sign-in");
+
+      toast.success(data.message);
+
+      // ✅ Delay navigation so toast message is visible
+      setTimeout(() => navigate("/sign-in"), 1500);
     } catch (error) {
-      setloading(false);
-      toast.error(error.message || "Error while making registration");
+      setLoading(false);
+      toast.error(error.message || "Error while signing up"); // ✅ Show backend error
     }
   };
+
   return (
     <>
       {loading && <Loader />}
@@ -59,24 +78,21 @@ const SignUp = () => {
           <input
             type="text"
             placeholder="Username"
-            name="userName"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
             className="border p-3 rounded-lg"
           />
 
           <input
-            type="text"
+            type="email" // ✅ Changed type to "email" for better validation
             placeholder="Email"
-            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="border p-3 rounded-lg"
           />
           <input
-            type="password" // ✅ Changed type from "text" to "password"
+            type="password"
             placeholder="Password"
-            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="border p-3 rounded-lg"
@@ -89,6 +105,7 @@ const SignUp = () => {
           >
             Sign Up
           </button>
+          <OAuth />
         </form>
         <div className="mt-3 text-lg">
           <p>

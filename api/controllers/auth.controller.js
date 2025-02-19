@@ -21,7 +21,9 @@ export const signUpUser = async (req, res, next) => {
     // Save the user to the database
     await newUser.save();
 
-    res.status(201).json({success:true, message: "User created Successfully" });
+    res
+      .status(201)
+      .json({ success: true, message: "User created Successfully" });
   } catch (error) {
     next(error);
   }
@@ -41,7 +43,7 @@ export const loginUser = async (req, res, next) => {
     // Compare the hashed password
     const validPassword = await bcrypt.compare(password, validUser.password);
     if (!validPassword) {
-      return res.status(400).json({ message: "Invalid Password" });
+      return res.status(400).json({ message: "Credentials are not valid" });
     }
     // res.status(200).json({ message: "Login Successful" });
     const token = jwt.sign({ _id: validUser._id }, process.env.SECRET_KEY);
@@ -50,11 +52,59 @@ export const loginUser = async (req, res, next) => {
     //we dont want to send password back to the user soo here we distrcurethe vluees
     const { password: _password, ...userInfo } = validUser._doc;
 
-    res
+    res.cookie("accessToken", token, { httpOnly: true }).status(200).json({
+      success: true,
+      message: "User Login Successfully",
+      user: userInfo,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const google = async (req, res, next) => {
+  try {
+    const { email, userName, photo } = req.body;
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY);
+      const { password: _password, ...userInfo } = user._doc;
+
+      return res
+        .cookie("accessToken", token, { httpOnly: true })
+        .status(200)
+        .json({
+          success: true,
+          message: "User Logged In Successfully",
+          user: userInfo,
+        });
+    }
+
+    // If user doesn't exist, create a new one
+    const generatedPassword = Math.random().toString(36).slice(-16); // Single call, cleaner
+    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+
+    const newUser = new User({
+      userName: userName.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
+      email,
+      password: hashedPassword,
+      avatar: photo, // Fixed typo: "avator" → "avatar"
+    });
+
+    await newUser.save();
+
+    const token = jwt.sign({ _id: newUser._id }, process.env.SECRET_KEY);
+    const { password: _password, ...userInfo } = newUser._doc;
+
+    return res
       .cookie("accessToken", token, { httpOnly: true })
       .status(200)
-      // .json({ message: "user login successfully" });
-      .json(userInfo);
+      .json({
+        success: true,
+        message: "User Created Successfully",
+        user: userInfo,
+      });
   } catch (error) {
     next(error);
   }
