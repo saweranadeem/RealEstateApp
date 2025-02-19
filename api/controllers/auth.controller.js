@@ -81,8 +81,8 @@ export const google = async (req, res, next) => {
         });
     }
 
-    // If user doesn't exist, create a new one
-    const generatedPassword = Math.random().toString(36).slice(-16); // Single call, cleaner
+  
+    const generatedPassword = Math.random().toString(36).slice(-16); 
     const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
     const newUser = new User({

@@ -19,7 +19,7 @@ const OAuth = () => {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: result.user.displayName,
+          userName: result.user.displayName,
           email: result.user.email,
           photo: result.user.photoURL,
         }),
