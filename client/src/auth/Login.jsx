@@ -10,7 +10,7 @@ import {
 } from "../../redux/slices/UserSlice";
 
 import { useDispatch, useSelector } from "react-redux";
-import OAuth from "../components/OAuth";
+// import OAuth from "../components/OAuth";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -55,7 +55,7 @@ const Login = () => {
       }
 
       // toast.success(data.message);
-      dispatch(signInSuccess(data));
+      dispatch(signInSuccess(data.user));
       setTimeout(() => {
         navigate("/"); // ✅ Only navigate after toast
       }, 1500);
@@ -73,7 +73,7 @@ const Login = () => {
         <h1 className="text-3xl text-center my-7 font-semibold">Sign In</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
-            type="text"
+            type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -89,11 +89,11 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="bg-slate-700 p-3 rounded-lg uppercase text-white hover:opacity-95 disabled:opacity-80"
+            className="bg-slate-700 p-3 cursor-pointer rounded-lg uppercase text-white hover:opacity-95 disabled:opacity-80"
           >
             Sign In
           </button>
-          <OAuth />
+          {/* <OAuth /> */}
         </form>
         <div className="mt-3 text-lg">
           <p>

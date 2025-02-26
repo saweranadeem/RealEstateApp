@@ -1,9 +1,11 @@
 import express from "express";
 import {
-  google,
   loginUser,
+  signOut,
   signUpUser,
 } from "../controllers/auth.controller.js";
+import { verifyToken } from "../utils/verifyUser.js";
+import { deleteLoginUser, updateUser } from "../controllers/user.controller.js";
 // import { test } from "../controllers/user.controller.js";
 // const userRouter = express.Router();
 // userRouter.get("/test", test);
@@ -11,5 +13,9 @@ import {
 const authRouter = express.Router();
 authRouter.post("/sign-up", signUpUser);
 authRouter.post("/sign-in", loginUser);
-authRouter.post("/google", google);
+authRouter.post("/updateLoginUser/:id", verifyToken, updateUser);
+authRouter.delete("/deleteUser/:id", verifyToken, deleteLoginUser);
+authRouter.get("/logOutuser", signOut);
+
+// authRouter.post("/google", google);
 export default authRouter;

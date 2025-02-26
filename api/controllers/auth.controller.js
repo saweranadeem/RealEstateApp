@@ -61,50 +61,59 @@ export const loginUser = async (req, res, next) => {
     next(error);
   }
 };
-export const google = async (req, res, next) => {
+// export const google = async (req, res, next) => {
+//   try {
+//     const { email, userName, photo } = req.body;
+
+//     let findUser = await User.findOne({ email });
+
+//     if (findUser) {
+//       const token = jwt.sign({ _id: findUser._id }, process.env.SECRET_KEY);
+//       const { password: _password, ...userInfo } = findUser._doc;
+
+//       return res
+//         .cookie("accessToken", token, { httpOnly: true })
+//         .status(200)
+//         .json({
+//           success: true,
+//           message: "User Logged In Successfully",
+//           user: userInfo,
+//         });
+//     }
+
+//     const generatedPassword = Math.random().toString(36).slice(-16);
+//     const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+
+//     const newUser = new User({
+//       userName:
+//         userName.split(" ").join("").toLowerCase() +
+//         Math.random().toString(36).slice(-4),
+//       email,
+//       password: hashedPassword,
+//       avatar: photo, // Fixed typo: "avator" → "avatar"
+//     });
+
+//     await newUser.save();
+
+//     const token = jwt.sign({ _id: newUser._id }, process.env.SECRET_KEY);
+//     const { password: _password, ...userInfo } = newUser._doc;
+
+//     return res
+//       .cookie("accessToken", token, { httpOnly: true })
+//       .status(200)
+//       .json({
+//         success: true,
+//         message: "User Created Successfully",
+//         user: userInfo,
+//       });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+export const signOut = async (req, res, next) => {
   try {
-    const { email, userName, photo } = req.body;
-
-    let user = await User.findOne({ email });
-
-    if (user) {
-      const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY);
-      const { password: _password, ...userInfo } = user._doc;
-
-      return res
-        .cookie("accessToken", token, { httpOnly: true })
-        .status(200)
-        .json({
-          success: true,
-          message: "User Logged In Successfully",
-          user: userInfo,
-        });
-    }
-
-  
-    const generatedPassword = Math.random().toString(36).slice(-16); 
-    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
-
-    const newUser = new User({
-      userName: userName.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
-      email,
-      password: hashedPassword,
-      avatar: photo, // Fixed typo: "avator" → "avatar"
-    });
-
-    await newUser.save();
-
-    const token = jwt.sign({ _id: newUser._id }, process.env.SECRET_KEY);
-    const { password: _password, ...userInfo } = newUser._doc;
-
-    return res
-      .cookie("accessToken", token, { httpOnly: true })
-      .status(200)
-      .json({
-        success: true,
-        message: "User Created Successfully",
-        user: userInfo,
-      });
+    res.clearCookie('accessToken');
+    res.status(200).json('User has been logged out!');
   } catch (error) {
     next(error);
   }

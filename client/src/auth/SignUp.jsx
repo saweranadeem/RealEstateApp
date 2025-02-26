@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Ensure toast styles are loaded
 import Loader from "./Loader";
-import OAuth from "../components/OAuth";
+// import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -101,11 +101,11 @@ const SignUp = () => {
           <button
             type="submit"
             disabled={loading}
-            className="bg-slate-700 p-3 rounded-lg uppercase text-white hover:opacity-95 disabled:opacity-80"
+            className="bg-slate-700 p-3 cursor-pointer rounded-lg uppercase text-white hover:opacity-95 disabled:opacity-80"
           >
             Sign Up
           </button>
-          <OAuth />
+          {/* <OAuth /> */}
         </form>
         <div className="mt-3 text-lg">
           <p>

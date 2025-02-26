@@ -14,7 +14,7 @@ const OAuth = () => {
       const provider = new GoogleAuthProvider();
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
-      //   console.log(result);
+      console.log(result);
       const res = await fetch("api/user/google", {
         method: "post",
         headers: { "Content-Type": "application/json" },
@@ -24,8 +24,12 @@ const OAuth = () => {
           photo: result.user.photoURL,
         }),
       });
+      console.log("Google photoURL:", result.user.photoURL);
+
       const data = await res.json();
-      dispatch(signInSuccess(data));
+      dispatch(signInSuccess({ ...data.user, avatar: data.user.avatar }));
+
+      
       navigate("/");
     } catch (error) {
       toast.error(error.message);

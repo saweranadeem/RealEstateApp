@@ -16,10 +16,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    avatar: {
-      type: String,
-      default: "https://banner2.cleanpng.com/20180331/czw/avirs25a1.webp",
-    },
   },
   { timestamps: true }
 );
