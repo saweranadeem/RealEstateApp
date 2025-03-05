@@ -29,7 +29,6 @@ const OAuth = () => {
       const data = await res.json();
       dispatch(signInSuccess({ ...data.user, avatar: data.user.avatar }));
 
-      
       navigate("/");
     } catch (error) {
       toast.error(error.message);
@@ -40,7 +39,7 @@ const OAuth = () => {
       <button
         type="button"
         onClick={handlegoogleAuth}
-        className="p-3 bg-red-700 rounded-lg text-white w-123 uppercase hover:opacity-95"
+        className="p-3 bg-red-700 rounded-lg text-white w-123 uppercase cursor-pointer hover:opacity-95"
       >
         Continue with google
       </button>

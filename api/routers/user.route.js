@@ -5,7 +5,11 @@ import {
   signUpUser,
 } from "../controllers/auth.controller.js";
 import { verifyToken } from "../utils/verifyUser.js";
-import { deleteLoginUser, updateUser } from "../controllers/user.controller.js";
+import {
+  deleteLoginUser,
+  getUserListings,
+  updateUser,
+} from "../controllers/user.controller.js";
 // import { test } from "../controllers/user.controller.js";
 // const userRouter = express.Router();
 // userRouter.get("/test", test);
@@ -13,9 +17,10 @@ import { deleteLoginUser, updateUser } from "../controllers/user.controller.js";
 const authRouter = express.Router();
 authRouter.post("/sign-up", signUpUser);
 authRouter.post("/sign-in", loginUser);
+
 authRouter.post("/updateLoginUser/:id", verifyToken, updateUser);
 authRouter.delete("/deleteUser/:id", verifyToken, deleteLoginUser);
 authRouter.get("/logOutuser", signOut);
-
-// authRouter.post("/google", google);
+authRouter.get("/listings/:id", verifyToken, getUserListings);
+authRouter.post("/google", google);
 export default authRouter;

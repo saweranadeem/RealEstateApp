@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Ensure toast styles are loaded
 import Loader from "./Loader";
-// import OAuth from "../components/OAuth";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -105,7 +105,7 @@ const SignUp = () => {
           >
             Sign Up
           </button>
-          {/* <OAuth /> */}
+          <OAuth />
         </form>
         <div className="mt-3 text-lg">
           <p>

@@ -10,7 +10,7 @@ import {
 } from "../../redux/slices/UserSlice";
 
 import { useDispatch, useSelector } from "react-redux";
-// import OAuth from "../components/OAuth";
+import OAuth from "../components/OAuth";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const Login = () => {
       Object.values(errors).forEach((errormsg) => {
         toast.error(errormsg);
       });
-      return; // ✅ Stop execution if validation errors exist
+      return;
     }
 
     // setLoading(true);
@@ -46,7 +46,6 @@ const Login = () => {
         body: JSON.stringify({ email, password }),
       });
 
-      // ✅ Handle response properly
       const data = await response.json();
       // setLoading(false);
 
@@ -93,7 +92,7 @@ const Login = () => {
           >
             Sign In
           </button>
-          {/* <OAuth /> */}
+          <OAuth  />
         </form>
         <div className="mt-3 text-lg">
           <p>
