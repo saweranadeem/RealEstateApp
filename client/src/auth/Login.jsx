@@ -1,27 +1,28 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Ensure toast styles are loaded
+import "react-toastify/dist/ReactToastify.css";
 import Loader from "./Loader";
 import {
   signInStart,
   signInSuccess,
   signInFailure,
 } from "../../redux/slices/UserSlice";
-
 import { useDispatch, useSelector } from "react-redux";
 import OAuth from "../components/OAuth";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [loading, setLoading] = useState(false);
-  const { loading, error } = useSelector((state) => state.user);
+  const [showPassword, setShowPassword] = useState(false);
+  const { loading } = useSelector((state) => state.user);
   const [errors, setError] = useState({});
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // ✅ Prevent form from reloading the page
+    e.preventDefault();
 
     let errors = {};
     if (!email) errors.email = "Email is required";
@@ -36,7 +37,6 @@ const Login = () => {
       return;
     }
 
-    // setLoading(true);
     dispatch(signInStart());
 
     try {
@@ -47,20 +47,16 @@ const Login = () => {
       });
 
       const data = await response.json();
-      // setLoading(false);
 
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong!");
       }
 
-      // toast.success(data.message);
       dispatch(signInSuccess(data.user));
       setTimeout(() => {
-        navigate("/"); // ✅ Only navigate after toast
+        navigate("/");
       }, 1500);
     } catch (error) {
-      // setLoading(false);
-      // toast.error(error.message || "Error while logging in");
       dispatch(signInFailure(error.message));
     }
   };
@@ -78,13 +74,25 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             className="border p-3 rounded-lg"
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border p-3 rounded-lg"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border p-3 rounded-lg w-full pr-10"
+            />
+            <span
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <AiFillEyeInvisible size={24} />
+              ) : (
+                <AiFillEye size={24} />
+              )}
+            </span>
+          </div>
           <button
             type="submit"
             disabled={loading}
@@ -92,11 +100,11 @@ const Login = () => {
           >
             Sign In
           </button>
-          <OAuth  />
+          <OAuth />
         </form>
         <div className="mt-3 text-lg">
           <p>
-            Dont have an account?
+            Don't have an account?
             <Link to="/sign-up">
               <span className="text-blue-700 ml-2">Sign up</span>
             </Link>

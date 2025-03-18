@@ -2,6 +2,7 @@ import express from "express";
 import {
   createlist,
   deleteListing,
+  getAllProperty,
   getList,
   updateListing,
 } from "../controllers/listing.controller.js";
@@ -11,4 +12,5 @@ listRouter.post("/createLists", createlist);
 listRouter.delete("/deleteList/:id", verifyToken, deleteListing);
 listRouter.post("/updateList/:id", verifyToken, updateListing);
 listRouter.get("/getLists/:id", getList);
+listRouter.get("/getAllProperty", getAllProperty);
 export default listRouter;

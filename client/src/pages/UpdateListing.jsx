@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import Loader from "../auth/Loader";
 
 const CreateListing = () => {
   const { currentUser } = useSelector((state) => state.user);

@@ -21,7 +21,7 @@ app.use("/api/uploads", imageRoute);
 
 app.use("/api/user", authRouter);
 app.use("/api/list", listRouter);
-//next middleware error
+//Errorhandling middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";

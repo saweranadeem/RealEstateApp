@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Ensure toast styles are loaded
+import "react-toastify/dist/ReactToastify.css";
 import Loader from "./Loader";
 import OAuth from "../components/OAuth";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const SignUp = () => {
   const navigate = useNavigate();
+
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // ✅ Prevent page reload
+    e.preventDefault();
 
-    // Trim input values to avoid accidental spaces
     const UserName = userName.trim();
     const Email = email.trim();
     const Password = password.trim();
@@ -35,7 +37,7 @@ const SignUp = () => {
 
     if (Object.keys(errors).length > 0) {
       Object.values(errors).forEach((errormsg) => toast.error(errormsg));
-      return; // ✅ Stop function if validation fails
+      return;
     }
 
     setLoading(true);
@@ -51,7 +53,7 @@ const SignUp = () => {
         }),
       });
 
-      const data = await response.json(); // ✅ Parse JSON response
+      const data = await response.json();
 
       setLoading(false);
 
@@ -60,12 +62,10 @@ const SignUp = () => {
       }
 
       toast.success(data.message);
-
-      // ✅ Delay navigation so toast message is visible
       setTimeout(() => navigate("/sign-in"), 1500);
     } catch (error) {
       setLoading(false);
-      toast.error(error.message || "Error while signing up"); // ✅ Show backend error
+      toast.error(error.message || "Error while signing up");
     }
   };
 
@@ -82,22 +82,32 @@ const SignUp = () => {
             onChange={(e) => setUserName(e.target.value)}
             className="border p-3 rounded-lg"
           />
-
           <input
-            type="email" // ✅ Changed type to "email" for better validation
+            type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="border p-3 rounded-lg"
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border p-3 rounded-lg"
-          />
-
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border p-3 rounded-lg w-full pr-10"
+            />
+            <span
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <AiFillEyeInvisible size={24} />
+              ) : (
+                <AiFillEye size={24} />
+              )}
+            </span>
+          </div>
           <button
             type="submit"
             disabled={loading}
