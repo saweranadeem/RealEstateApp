@@ -1,9 +1,16 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import ListingCard from "../components/ListingCard";
 // import ListingItem from "../components/ListingItem";
 
 export default function Search() {
-  //   const navigate = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+
   const [searchData, setSearchdata] = useState({
     searchTerm: "",
     Type: "all",
@@ -13,16 +20,113 @@ export default function Search() {
     sort: "created_at",
     order: "desc",
   });
+  //   console.log(searchData);
 
   const handleChange = (e) => {
-    // This function can be used to handle input changes if needed
+    if (
+      e.target.id === "all" ||
+      e.target.id === "sale" ||
+      e.target.id === "rent"
+    ) {
+      setSearchdata({ ...searchData, Type: e.target.id });
+    }
+    if (e.target.id === "searchTerm") {
+      setSearchdata({ ...searchData, searchTerm: e.target.value });
+    }
+    if (
+      e.target.id === "parking" ||
+      e.target.id === "furnished" ||
+      e.target.id === "offer"
+    ) {
+      setSearchdata({
+        ...searchData,
+        [e.target.id]:
+          e.target.checked || e.target.checked === "true" ? true : false,
+      });
+    }
+    if (e.target.id === "sort_order") {
+      const sort = e.target.value.split("_")[0] || "created_at";
+
+      const order = e.target.value.split("_")[1] || "desc";
+
+      setSearchdata({ ...searchData, sort, order });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // This function can be used to handle form submission if needed
+    const urlParams = new URLSearchParams();
+    urlParams.set("searchTerm", searchData.searchTerm);
+    urlParams.set("Type", searchData.Type);
+    urlParams.set("offer", searchData.offer);
+    urlParams.set("parking", searchData.parking);
+    urlParams.set("furnished", searchData.furnished);
+    urlParams.set("sort", searchData.sort);
+    urlParams.set("order", searchData.order);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
   };
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    const typeFromUrl = urlParams.get("Type");
+    const parkingFromUrl = urlParams.get("parking");
+    const furnishedFromUrl = urlParams.get("furnished");
+    const offerFromUrl = urlParams.get("offer");
+    const sortFromUrl = urlParams.get("sort");
+    const orderFromUrl = urlParams.get("order");
 
+    if (
+      searchTermFromUrl ||
+      typeFromUrl ||
+      parkingFromUrl ||
+      furnishedFromUrl ||
+      offerFromUrl ||
+      sortFromUrl ||
+      orderFromUrl
+    ) {
+      setSearchdata({
+        searchTerm: searchTermFromUrl || "",
+        Type: typeFromUrl || "all",
+        parking: parkingFromUrl === "true",
+        furnished: furnishedFromUrl === "true",
+        offer: offerFromUrl === "true",
+        sort: sortFromUrl || "created_at",
+        order: orderFromUrl || "desc",
+      });
+    }
+
+    const fetchListings = async () => {
+      setLoading(true);
+      setShowMore(false);
+      const searchQuery = urlParams.toString();
+      const res = await fetch(`/api/list/getAllProperty?${searchQuery}`);
+      const data = await res.json();
+      if (data.length > 8) {
+        setShowMore(true);
+      } else {
+        setShowMore(false);
+      }
+      setListings(data);
+      console.log(listings);
+      setLoading(false);
+    };
+
+    fetchListings();
+  }, [location.search]);
+  const onShowMoreClick = async () => {
+    const numberOfListings = listings.length;
+    const startIndex = numberOfListings;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/list/getAllProperty?${searchQuery}`);
+    const data = await res.json();
+    if (data.length < 9) {
+      setShowMore(false);
+    }
+    setListings([...listings, ...data]);
+  };
   return (
     <div className="flex flex-col md:flex-row">
       <div className="p-7 border-b-3 md:border-r-2 md:min-h-screen">
@@ -130,7 +234,7 @@ export default function Search() {
           Listing results:
         </h1>
         <div className="p-7 flex flex-wrap gap-4">
-          {/* {!loading && listings.length === 0 && (
+          {!loading && listings.length === 0 && (
             <p className="text-xl text-slate-700">No listing found!</p>
           )}
           {loading && (
@@ -140,16 +244,16 @@ export default function Search() {
           )}
           {!loading &&
             listings.map((listing) => (
-              <ListingItem key={listing._id} listing={listing} />
+              <ListingCard key={listing._id} listing={listing} />
             ))}
-          {showMore && ( */}
-          <button
-            //   onClick={onShowMoreClick}
-            className="text-green-700 hover:underline p-7 text-center w-full"
-          >
-            Show more
-          </button>
-          {/* )} */}
+          {showMore && (
+            <button
+              onClick={onShowMoreClick}
+              className="text-green-700 hover:underline p-7 text-center w-full"
+            >
+              Show more
+            </button>
+          )}
         </div>
       </div>
     </div>
